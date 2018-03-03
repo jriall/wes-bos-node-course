@@ -916,8 +916,8 @@ label {
     opacity: 0;
     top: 0; }
   .heart__button svg {
-    width: 25px;
-    fill: white; }
+    fill: white;
+    width: 25px; }
   .heart__button--hearted svg {
     fill: red; }
   .heart__button--float:after {
