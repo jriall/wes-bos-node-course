@@ -6,33 +6,44 @@ const storeSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
-    required: 'Please enter a store name!'
+    required: 'Please enter a store name!',
   },
   slug: String,
   description: {
     type: String,
-    trim: true
+    trim: true,
   },
   tags: [String],
   created: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   location: {
     type: {
       type: String,
-      default: 'Point'
+      default: 'Point',
     },
     coordinates: [{
       type: Number,
-      required: 'You must supply coordinates!'
+      required: 'You must supply coordinates!',
     }],
     address: {
       type: String,
-      required: 'You must supply an address!'
-    }
+      required: 'You must supply an address!',
+    },
   },
-  photo: String
+  photo: String,
+  author: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: 'You must supply an author',
+  },
+});
+
+// Define our indexes
+storeSchema.index({
+  name: 'text',
+  description: 'text',
 });
 
 storeSchema.pre('save', async function(next) {
@@ -44,14 +55,14 @@ storeSchema.pre('save', async function(next) {
   //find other stores that have a slug of wes, wes-1, wes-2
   const slugRegEx = new RegExp(`^(${this.slug})((-[0-9]*$)?)$`, 'i');
   const storesWithSlug = await this.constructor.find({ slug: slugRegEx });
-  if(storesWithSlug.length) {
+  if (storesWithSlug.length) {
     this.slug = `${this.slug}-${storesWithSlug.length + 1}`;
   }
   next();
-  //TODO: make more resilient so slugs are unique
+  // TODO: make more resilient so slugs are unique
 });
 
-storeSchema.statics.getTagsList = function() {
+storeSchema.statics.getTagsList = function () {
   return this.aggregate([
     { $unwind: '$tags' },
     { $group: { _id: '$tags', count: { $sum: 1 } } },
