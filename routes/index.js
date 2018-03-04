@@ -3,6 +3,7 @@ const storeController = require('../controllers/storeController');
 const { catchErrors } = require('../handlers/errorHandlers');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+const reviewController = require('../controllers/reviewController');
 
 const router = express.Router();
 
@@ -55,6 +56,7 @@ router.post(
 );
 router.get('/map', storeController.mapPage);
 router.get('/hearts', authController.isLoggedIn, catchErrors(storeController.getHearts));
+router.post('/reviews/:id', authController.isLoggedIn, catchErrors(reviewController.addReview));
 
 router.get('/api/search', catchErrors(storeController.searchStores));
 router.get('/api/stores/near', catchErrors(storeController.mapStores));
